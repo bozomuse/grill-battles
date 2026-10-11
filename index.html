@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Battleship Arena — Free-Play Prototype</title>
+<meta name="description" content="Classic Battleship 1v1 against the machine. Free-play prototype, no real money.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <span class="wordmark">Battleship Arena</span>
+  <span class="proto-tag">Free-play prototype</span>
+</header>
+
+<main>
+  <!-- START -->
+  <section id="screen-start" class="screen" aria-labelledby="start-title">
+    <p class="eyebrow">Naval combat, one shot per turn</p>
+    <h1 id="start-title">Sink the fleet<br>before it sinks yours.</h1>
+    <p class="lede">Classic Battleship 1v1 against a machine opponent that hunts in patterns and finishes what it starts. Place five ships, trade shots, first to 17 hits takes the sea.</p>
+    <button id="btn-deploy" class="btn-primary btn-big">Deploy your fleet</button>
+    <ol class="rules-strip">
+      <li><span class="rule-num">01</span><span>Place 5 ships on your waters. Tap a ship, tap the grid, rotate as needed.</span></li>
+      <li><span class="rule-num">02</span><span>Pick a square on enemy waters, confirm, fire. Hits burn red, misses fade grey.</span></li>
+      <li><span class="rule-num">03</span><span>Sink all five enemy ships. Seventeen hits wins the battle.</span></li>
+    </ol>
+  </section>
+
+  <!-- PLACEMENT -->
+  <section id="screen-place" class="screen" aria-labelledby="place-title" hidden>
+    <p class="eyebrow">Phase one</p>
+    <h2 id="place-title">Place your fleet</h2>
+    <p class="hint" id="place-hint">Select a ship, then tap a square on your waters.</p>
+    <div class="fleet-chips" id="fleet-chips" role="group" aria-label="Ships to place"></div>
+    <div class="board-wrap">
+      <div class="board" id="place-board" role="grid" aria-label="Your waters, ship placement"></div>
+    </div>
+    <div class="place-controls">
+      <button id="btn-rotate" class="btn-ghost" aria-label="Rotate ship orientation">Rotate: <span id="rotate-label">Horizontal</span></button>
+      <button id="btn-random" class="btn-ghost">Random</button>
+      <button id="btn-clear" class="btn-ghost">Clear</button>
+    </div>
+    <button id="btn-sail" class="btn-primary btn-big" disabled>Set sail</button>
+  </section>
+
+  <!-- BATTLE -->
+  <section id="screen-battle" class="screen" aria-labelledby="battle-status" hidden>
+    <div class="battle-banner" id="battle-status" role="status">Your shot</div>
+    <div class="score-row">
+      <div class="score"><span class="score-label">You</span><span class="score-num" id="score-you">0/17</span></div>
+      <div class="score"><span class="score-label">Enemy</span><span class="score-num" id="score-bot">0/17</span></div>
+    </div>
+
+    <h2 class="board-title">Enemy waters</h2>
+    <div class="board-wrap">
+      <div class="board" id="enemy-board" role="grid" aria-label="Enemy waters, tap a square then fire"></div>
+    </div>
+    <button id="btn-fire" class="btn-fire" disabled>Fire</button>
+
+    <h2 class="board-title board-title-small">Your fleet</h2>
+    <div class="board-wrap board-wrap-small">
+      <div class="board board-small" id="own-board" role="grid" aria-label="Your waters, showing enemy shots"></div>
+    </div>
+
+    <h2 class="board-title board-title-small">Battle log</h2>
+    <ol class="battle-log" id="battle-log" aria-live="polite"></ol>
+  </section>
+
+  <!-- GAME OVER -->
+  <section id="screen-over" class="screen" aria-labelledby="over-title" hidden>
+    <p class="eyebrow" id="over-eyebrow">Battle complete</p>
+    <h2 id="over-title">Victory</h2>
+    <p class="lede" id="over-sub"></p>
+    <dl class="stats">
+      <div><dt>Your shots</dt><dd id="stat-shots">0</dd></div>
+      <div><dt>Your hits</dt><dd id="stat-hits">0</dd></div>
+      <div><dt>Accuracy</dt><dd id="stat-acc">0%</dd></div>
+      <div><dt>Enemy ships sunk</dt><dd id="stat-sunk">0/5</dd></div>
+    </dl>
+    <button id="btn-rematch" class="btn-primary btn-big">Rematch</button>
+    <button id="btn-newfleet" class="btn-ghost btn-block">Place a new fleet</button>
+  </section>
+</main>
+
+<footer class="footnote">
+  Free-play prototype. No real money, no accounts, nothing leaves your phone.
+</footer>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
