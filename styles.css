@@ -217,6 +217,15 @@ button {
 .resume-actions .btn-primary { flex: 1.4; }
 .resume-actions .btn-ghost { flex: 1; }
 
+.play-count {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: -0.6rem 0 2.4rem;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.play-count[hidden] { display: none; }
+
 .rules-strip {
   list-style: none;
   margin: 0;

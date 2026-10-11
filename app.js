@@ -250,6 +250,7 @@
     log('Aprons on. You fire first.');
     refreshBattle();
     saveBattle();
+    bumpPlayCount();
     show('battle');
   }
 
@@ -420,6 +421,32 @@
 
   function hideResumeCard() { resumeCard.hidden = true; }
 
+  /* ---------- play counter (local only: no network, no third parties) ---------- */
+  var PLAY_COUNT_KEY = 'grill-battles-play-count';
+  var playCountEl = document.getElementById('play-count');
+
+  function getPlayCount() {
+    try {
+      var n = parseInt(localStorage.getItem(PLAY_COUNT_KEY) || '0', 10);
+      return isNaN(n) || n < 0 ? 0 : n;
+    } catch (e) { return 0; }
+  }
+
+  function renderPlayCount() {
+    var n = getPlayCount();
+    if (n <= 0) { playCountEl.hidden = true; return; }
+    playCountEl.hidden = false;
+    playCountEl.textContent = n === 1
+      ? 'You have fired up 1 cookout on this device.'
+      : 'You have fired up ' + n + ' cookouts on this device.';
+  }
+
+  function bumpPlayCount() {
+    try {
+      localStorage.setItem(PLAY_COUNT_KEY, String(getPlayCount() + 1));
+    } catch (e) {}
+    renderPlayCount();
+  }
   function maybeShowResume() {
     var s = loadSave();
     if (!s) { hideResumeCard(); return; }
@@ -484,4 +511,5 @@
 
   show('start');
   maybeShowResume();
+  renderPlayCount();
 })();
