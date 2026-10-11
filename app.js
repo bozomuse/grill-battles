@@ -201,6 +201,7 @@
   var selectedTarget = null;
   var busy = false;
   var playerShots = 0, playerHits = 0;
+  var botShots = []; // bot shots in order, for bot-state rebuild on resume
 
   var enemyBoardEl = document.getElementById('enemy-board');
   var ownBoardEl = document.getElementById('own-board');
@@ -239,6 +240,7 @@
     botBoard = B.createBoard();
     B.placeFleetRandom(botBoard);
     bot = B.createBot();
+    botShots = [];
     selectedTarget = null;
     busy = false;
     playerShots = 0;
@@ -247,6 +249,7 @@
     setBanner('Your shot', 'your-turn');
     log('Battle stations. You fire first.');
     refreshBattle();
+    saveBattle();
     show('battle');
   }
 
@@ -278,6 +281,7 @@
       log('You fired ' + label(x, y) + ': HIT — you sunk their ' + r.ship + '.', 'sunk');
     }
     refreshBattle();
+    saveBattle();
     if (r.result === 'hit' || r.result === 'sunk') {
       var flash = enemyBoardEl.querySelector('.cell[data-x="' + x + '"][data-y="' + y + '"]');
       if (flash) flash.classList.add('hit-flash');
@@ -294,6 +298,7 @@
     var s = B.botNextShot(bot);
     var r = B.fireAt(playerBoard, s[0], s[1]);
     B.botRecord(bot, s[0], s[1], r);
+    botShots.push([s[0], s[1]]);
     if (r.result === 'miss') {
       log('Enemy fired ' + label(s[0], s[1]) + ': miss.');
     } else if (r.result === 'hit') {
@@ -303,6 +308,7 @@
     }
     busy = false;
     refreshBattle();
+    saveBattle();
     if (B.allSunk(playerBoard)) {
       setTimeout(function () { endGame(false); }, 650);
       return;
@@ -310,8 +316,123 @@
     setBanner('Your shot', 'your-turn');
   }
 
+  /* ================= SAVE / RESUME =================
+   * The game used to live only in memory, so any tab reload (app switch,
+   * screen lock, memory pressure on a phone) wiped a mid-battle game.
+   * Now every shot is persisted to localStorage and the start screen
+   * offers a resume. Bot state is rebuilt by replaying its shots in order. */
+  var SAVE_KEY = 'battleship-arena-save-v1';
+
+  function boardPlacements(board) {
+    var out = [];
+    board.ships.forEach(function (s, i) {
+      if (s.cells.length === 0) return;
+      var c0 = s.cells[0];
+      var horiz = s.cells.length > 1 && s.cells[1][0] !== c0[0];
+      out.push({ ship: i, x: c0[0], y: c0[1], horizontal: horiz });
+    });
+    return out;
+  }
+
+  function boardShots(board) {
+    var out = [];
+    for (var y = 0; y < 10; y++) {
+      for (var x = 0; x < 10; x++) {
+        if (board.cells[y][x].hit) out.push([x, y]);
+      }
+    }
+    return out;
+  }
+
+  function rebuildBoard(placementsList, shots) {
+    var board = B.createBoard();
+    placementsList.forEach(function (p) { B.placeShip(board, p.ship, p.x, p.y, p.horizontal); });
+    shots.forEach(function (s) { B.fireAt(board, s[0], s[1]); });
+    return board;
+  }
+
+  function saveBattle() {
+    try {
+      if (!botBoard || !B.fleetComplete(playerBoard)) return;
+      if (B.allSunk(botBoard) || B.allSunk(playerBoard)) { clearSave(); return; }
+      var logItems = [];
+      var lis = logEl.querySelectorAll('li');
+      for (var i = Math.max(0, lis.length - 60); i < lis.length; i++) {
+        logItems.push({ msg: lis[i].textContent, cls: lis[i].className || '' });
+      }
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        v: 1,
+        savedAt: Date.now(),
+        playerPlacements: placements.slice(),
+        botPlacements: boardPlacements(botBoard),
+        playerShots: boardShots(botBoard),
+        botShots: botShots.slice(),
+        log: logItems
+      }));
+    } catch (e) { /* storage unavailable: game still works, just no resume */ }
+  }
+
+  function validSave(s) {
+    if (!s || s.v !== 1) return false;
+    if (!Array.isArray(s.playerPlacements) || s.playerPlacements.length !== 5) return false;
+    if (!Array.isArray(s.botPlacements) || s.botPlacements.length !== 5) return false;
+    return true;
+  }
+
+  function loadSave() {
+    try {
+      var raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      return validSave(s) ? s : null;
+    } catch (e) { return null; }
+  }
+
+  function clearSave() {
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  }
+
+  function resumeBattle(s) {
+    playerBoard = rebuildBoard(s.playerPlacements, []);
+    bot = B.createBot();
+    botShots = [];
+    (s.botShots || []).forEach(function (xy) {
+      var r = B.fireAt(playerBoard, xy[0], xy[1]);
+      B.botRecord(bot, xy[0], xy[1], r);
+      botShots.push(xy);
+    });
+    botBoard = rebuildBoard(s.botPlacements, s.playerShots || []);
+    placements = s.playerPlacements.slice();
+    selectedTarget = null;
+    busy = false; // if we reloaded mid-bot-turn, its shot never happened; player goes again
+    playerShots = (s.playerShots || []).length;
+    playerHits = B.hitCount(botBoard);
+    logEl.innerHTML = '';
+    (s.log || []).forEach(function (item) { log(item.msg, item.cls || undefined); });
+    log('Welcome back. Your shot.');
+    setBanner('Your shot', 'your-turn');
+    refreshBattle();
+    hideResumeCard();
+    show('battle');
+  }
+
+  var resumeCard = document.getElementById('resume-card');
+
+  function hideResumeCard() { resumeCard.hidden = true; }
+
+  function maybeShowResume() {
+    var s = loadSave();
+    if (!s) { hideResumeCard(); return; }
+    document.getElementById('resume-sub').textContent =
+      'Saved ' + new Date(s.savedAt).toLocaleString() + '. Your fleet is right where you left it.';
+    resumeCard.hidden = false;
+    document.getElementById('btn-resume').onclick = function () { resumeBattle(s); };
+    document.getElementById('btn-discard').onclick = function () { clearSave(); hideResumeCard(); };
+  }
+
   /* ================= GAME OVER ================= */
   function endGame(won) {
+    clearSave();
     var title = document.getElementById('over-title');
     title.textContent = won ? 'Victory' : 'Defeat';
     title.className = won ? 'win' : '';
@@ -329,6 +450,7 @@
 
   /* ================= NAV ================= */
   document.getElementById('btn-deploy').addEventListener('click', function () {
+    clearSave();
     playerBoard = B.createBoard();
     placements = [];
     selectedShip = 0;
@@ -352,6 +474,7 @@
   });
 
   document.getElementById('btn-newfleet').addEventListener('click', function () {
+    clearSave();
     playerBoard = B.createBoard();
     placements = [];
     selectedShip = 0;
@@ -360,4 +483,5 @@
   });
 
   show('start');
+  maybeShowResume();
 })();

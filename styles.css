@@ -187,7 +187,36 @@ button {
 }
 
 /* ---------- start screen ---------- */
-#btn-deploy { margin-bottom: 2.4rem; }
+#btn-deploy { margin-bottom: 1.4rem; }
+
+.resume-card {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 1.1rem 1.2rem 1.2rem;
+  margin-bottom: 2.4rem;
+}
+
+.resume-card[hidden] { display: none; }
+
+.resume-title {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1.05rem;
+  margin: 0 0 0.25rem;
+  color: var(--accent);
+}
+
+.resume-sub {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0 0 1rem;
+}
+
+.resume-actions { display: flex; gap: 0.6rem; }
+.resume-actions .btn-primary { flex: 1.4; }
+.resume-actions .btn-ghost { flex: 1; }
 
 .rules-strip {
   list-style: none;
