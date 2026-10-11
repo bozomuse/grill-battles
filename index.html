@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Battleship Arena — Free-Play Prototype</title>
-<meta name="description" content="Classic Battleship 1v1 against the machine. Free-play prototype, no real money.">
+<title>Grill Battles — Free-Play Prototype</title>
+<meta name="description" content="Grill-on-grill combat, one shot per turn. A STAKR cookout joint. Free-play prototype, no real money.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,47 +13,47 @@
 </head>
 <body>
 <header class="topbar">
-  <span class="wordmark">Battleship Arena</span>
+  <span class="wordmark">Grill Battles</span>
   <span class="proto-tag">Free-play prototype</span>
 </header>
 
 <main>
   <!-- START -->
   <section id="screen-start" class="screen" aria-labelledby="start-title">
-    <p class="eyebrow">Naval combat, one shot per turn</p>
-    <h1 id="start-title">Sink the fleet<br>before it sinks yours.</h1>
-    <p class="lede">Classic Battleship 1v1 against a machine opponent that hunts in patterns and finishes what it starts. Place five ships, trade shots, first to 17 hits takes the sea.</p>
-    <button id="btn-deploy" class="btn-primary btn-big">Deploy your fleet</button>
+    <p class="eyebrow">Backyard combat, one shot per turn</p>
+    <h1 id="start-title">Sink their spread<br>before they sink yours.</h1>
+    <p class="lede">Five grills. One pitmaster. Grill-on-grill combat against a machine opponent that hunts in patterns and finishes what it starts. Set your cookers, trade shots, first to 17 hits takes the night.</p>
+    <button id="btn-deploy" class="btn-primary btn-big">Fire up the grills</button>
     <div id="resume-card" class="resume-card" hidden>
-      <p class="resume-title">Battle in progress</p>
+      <p class="resume-title">Cookout in progress</p>
       <p class="resume-sub" id="resume-sub">Pick up where you left off.</p>
       <div class="resume-actions">
-        <button id="btn-resume" class="btn-primary">Resume battle</button>
+        <button id="btn-resume" class="btn-primary">Back to the fire</button>
         <button id="btn-discard" class="btn-ghost">Discard</button>
       </div>
     </div>
     <ol class="rules-strip">
-      <li><span class="rule-num">01</span><span>Place 5 ships on your waters. Tap a ship, tap the grid, rotate as needed.</span></li>
-      <li><span class="rule-num">02</span><span>Pick a square on enemy waters, confirm, fire. Hits burn red, misses fade grey.</span></li>
-      <li><span class="rule-num">03</span><span>Sink all five enemy ships. Seventeen hits wins the battle.</span></li>
+      <li><span class="rule-num">01</span><span>Set 5 cookers on your side of the yard. Tap a cooker, tap the grass, rotate as needed.</span></li>
+      <li><span class="rule-num">02</span><span>Pick a square on their cookout, confirm, fire. Hits burn ember, misses fade to ash.</span></li>
+      <li><span class="rule-num">03</span><span>Wreck all five of their cookers. Seventeen hits wins the night.</span></li>
     </ol>
   </section>
 
   <!-- PLACEMENT -->
   <section id="screen-place" class="screen" aria-labelledby="place-title" hidden>
     <p class="eyebrow">Phase one</p>
-    <h2 id="place-title">Place your fleet</h2>
-    <p class="hint" id="place-hint">Select a ship, then tap a square on your waters.</p>
-    <div class="fleet-chips" id="fleet-chips" role="group" aria-label="Ships to place"></div>
+    <h2 id="place-title">Set up your cookout</h2>
+    <p class="hint" id="place-hint">Select a cooker, then tap a square on your side.</p>
+    <div class="fleet-chips" id="fleet-chips" role="group" aria-label="Cookers to place"></div>
     <div class="board-wrap">
-      <div class="board" id="place-board" role="grid" aria-label="Your waters, ship placement"></div>
+      <div class="board" id="place-board" role="grid" aria-label="Your side, cooker placement"></div>
     </div>
     <div class="place-controls">
-      <button id="btn-rotate" class="btn-ghost" aria-label="Rotate ship orientation">Rotate: <span id="rotate-label">Horizontal</span></button>
+      <button id="btn-rotate" class="btn-ghost" aria-label="Rotate cooker orientation">Rotate: <span id="rotate-label">Horizontal</span></button>
       <button id="btn-random" class="btn-ghost">Random</button>
       <button id="btn-clear" class="btn-ghost">Clear</button>
     </div>
-    <button id="btn-sail" class="btn-primary btn-big" disabled>Set sail</button>
+    <button id="btn-sail" class="btn-primary btn-big" disabled>Light the coals</button>
   </section>
 
   <!-- BATTLE -->
@@ -61,42 +61,42 @@
     <div class="battle-banner" id="battle-status" role="status">Your shot</div>
     <div class="score-row">
       <div class="score"><span class="score-label">You</span><span class="score-num" id="score-you">0/17</span></div>
-      <div class="score"><span class="score-label">Enemy</span><span class="score-num" id="score-bot">0/17</span></div>
+      <div class="score"><span class="score-label">Them</span><span class="score-num" id="score-bot">0/17</span></div>
     </div>
 
-    <h2 class="board-title">Enemy waters</h2>
+    <h2 class="board-title">Their cookout</h2>
     <div class="board-wrap">
-      <div class="board" id="enemy-board" role="grid" aria-label="Enemy waters, tap a square then fire"></div>
+      <div class="board" id="enemy-board" role="grid" aria-label="Their cookout, tap a square then fire"></div>
     </div>
     <button id="btn-fire" class="btn-fire" disabled>Fire</button>
 
-    <h2 class="board-title board-title-small">Your fleet</h2>
+    <h2 class="board-title board-title-small">Your spread</h2>
     <div class="board-wrap board-wrap-small">
-      <div class="board board-small" id="own-board" role="grid" aria-label="Your waters, showing enemy shots"></div>
+      <div class="board board-small" id="own-board" role="grid" aria-label="Your spread, showing their shots"></div>
     </div>
 
-    <h2 class="board-title board-title-small">Battle log</h2>
+    <h2 class="board-title board-title-small">Fire log</h2>
     <ol class="battle-log" id="battle-log" aria-live="polite"></ol>
   </section>
 
   <!-- GAME OVER -->
   <section id="screen-over" class="screen" aria-labelledby="over-title" hidden>
-    <p class="eyebrow" id="over-eyebrow">Battle complete</p>
+    <p class="eyebrow" id="over-eyebrow">Cookout complete</p>
     <h2 id="over-title">Victory</h2>
     <p class="lede" id="over-sub"></p>
     <dl class="stats">
       <div><dt>Your shots</dt><dd id="stat-shots">0</dd></div>
       <div><dt>Your hits</dt><dd id="stat-hits">0</dd></div>
       <div><dt>Accuracy</dt><dd id="stat-acc">0%</dd></div>
-      <div><dt>Enemy ships sunk</dt><dd id="stat-sunk">0/5</dd></div>
+      <div><dt>Cookers wrecked</dt><dd id="stat-sunk">0/5</dd></div>
     </dl>
     <button id="btn-rematch" class="btn-primary btn-big">Rematch</button>
-    <button id="btn-newfleet" class="btn-ghost btn-block">Place a new fleet</button>
+    <button id="btn-newfleet" class="btn-ghost btn-block">Set up a new cookout</button>
   </section>
 </main>
 
 <footer class="footnote">
-  Free-play prototype. No real money, no accounts, nothing leaves your phone.
+  A STAKR cookout joint. Free-play prototype, no real money.
 </footer>
 
 <script src="engine.js"></script>

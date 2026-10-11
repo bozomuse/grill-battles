@@ -57,7 +57,7 @@ function check(cond, msg) {
   check(r.result === 'hit', 'ship cell is a hit');
   check(B.allSunk(b) === false, 'one ship down, fleet alive');
   r = B.fireAt(b, 1, 0);
-  check(r.result === 'sunk' && r.ship === 'Destroyer' && r.size === 2, 'final cell sinks with name+size');
+  check(r.result === 'sunk' && r.ship === 'Kettle' && r.size === 2, 'final cell sinks with name+size');
 })();
 
 // 4. Full bot-vs-bot games: must terminate, winner sinks all 17, loser does not.

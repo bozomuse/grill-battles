@@ -1,4 +1,4 @@
-/* Battleship Arena — free-play client. Player vs bot, classic mode. */
+/* Grill Battles — free-play client. Player vs bot, classic mode. */
 (function () {
   'use strict';
 
@@ -59,7 +59,7 @@
         state = 'ship';
         aria += ', ' + B.SHIPS[cell.ship].name;
       } else {
-        aria += ', empty water';
+        aria += ', empty grass';
       }
       btn.classList.add('fireable');
     } else if (view === 'enemy') {
@@ -75,7 +75,7 @@
         state = 'selected';
         aria += ', targeted';
       } else {
-        aria += ', untested water';
+        aria += ', untested';
         btn.classList.add('fireable');
       }
     } else { // own
@@ -87,7 +87,7 @@
           state = 'miss';
         }
       }
-      aria += ', ' + state;
+      aria += ', ' + (state === 'water' ? 'grass' : state);
     }
 
     btn.dataset.state = state;
@@ -113,7 +113,7 @@
     var done = B.fleetComplete(playerBoard);
     sailBtn.disabled = !done;
     if (done) {
-      hintEl.textContent = 'Fleet ready. Set sail when you are.';
+      hintEl.textContent = 'Cookout ready. Light the coals when you are.';
     } else {
       var next = firstUnplaced();
       hintEl.textContent = 'Placing: ' + B.SHIPS[next].name + ' (' + B.SHIPS[next].size + ' squares). Tap a square.';
@@ -247,7 +247,7 @@
     playerHits = 0;
     logEl.innerHTML = '';
     setBanner('Your shot', 'your-turn');
-    log('Battle stations. You fire first.');
+    log('Aprons on. You fire first.');
     refreshBattle();
     saveBattle();
     show('battle');
@@ -278,7 +278,7 @@
       log('You fired ' + label(x, y) + ': HIT.', 'hit');
     } else if (r.result === 'sunk') {
       playerHits++;
-      log('You fired ' + label(x, y) + ': HIT — you sunk their ' + r.ship + '.', 'sunk');
+      log('You fired ' + label(x, y) + ': HIT — you wrecked their ' + r.ship + '.', 'sunk');
     }
     refreshBattle();
     saveBattle();
@@ -290,7 +290,7 @@
       setTimeout(function () { endGame(true); }, 650);
       return;
     }
-    setBanner('Enemy inbound', 'waiting');
+    setBanner('Incoming', 'waiting');
     setTimeout(botTurn, 750);
   });
 
@@ -300,11 +300,11 @@
     B.botRecord(bot, s[0], s[1], r);
     botShots.push([s[0], s[1]]);
     if (r.result === 'miss') {
-      log('Enemy fired ' + label(s[0], s[1]) + ': miss.');
+      log('They fired ' + label(s[0], s[1]) + ': miss.');
     } else if (r.result === 'hit') {
-      log('Enemy fired ' + label(s[0], s[1]) + ': HIT on your ' + r.ship + '.', 'hit');
+      log('They fired ' + label(s[0], s[1]) + ': HIT on your ' + r.ship + '.', 'hit');
     } else if (r.result === 'sunk') {
-      log('Enemy fired ' + label(s[0], s[1]) + ': HIT — they sunk your ' + r.ship + '.', 'sunk');
+      log('They fired ' + label(s[0], s[1]) + ': HIT — they wrecked your ' + r.ship + '.', 'sunk');
     }
     busy = false;
     refreshBattle();
@@ -409,7 +409,7 @@
     playerHits = B.hitCount(botBoard);
     logEl.innerHTML = '';
     (s.log || []).forEach(function (item) { log(item.msg, item.cls || undefined); });
-    log('Welcome back. Your shot.');
+    log('Welcome back to the fire. Your shot.');
     setBanner('Your shot', 'your-turn');
     refreshBattle();
     hideResumeCard();
@@ -424,7 +424,7 @@
     var s = loadSave();
     if (!s) { hideResumeCard(); return; }
     document.getElementById('resume-sub').textContent =
-      'Saved ' + new Date(s.savedAt).toLocaleString() + '. Your fleet is right where you left it.';
+      'Saved ' + new Date(s.savedAt).toLocaleString() + '. Your grills are right where you left them.';
     resumeCard.hidden = false;
     document.getElementById('btn-resume').onclick = function () { resumeBattle(s); };
     document.getElementById('btn-discard').onclick = function () { clearSave(); hideResumeCard(); };
@@ -436,10 +436,10 @@
     var title = document.getElementById('over-title');
     title.textContent = won ? 'Victory' : 'Defeat';
     title.className = won ? 'win' : '';
-    document.getElementById('over-eyebrow').textContent = won ? 'Enemy fleet destroyed' : 'Your fleet was lost';
+    document.getElementById('over-eyebrow').textContent = won ? 'Their cookout is ashes' : 'Your spread got torched';
     document.getElementById('over-sub').textContent = won
-      ? 'All five enemy ships rest on the ocean floor. The sea is yours.'
-      : 'The enemy found every ship. Regroup and run it back.';
+      ? 'All five of their cookers are cold. The night is yours.'
+      : 'They found every cooker. Regroup and run it back.';
     document.getElementById('stat-shots').textContent = playerShots;
     document.getElementById('stat-hits').textContent = playerHits;
     document.getElementById('stat-acc').textContent =
@@ -466,7 +466,7 @@
   });
 
   document.getElementById('btn-rematch').addEventListener('click', function () {
-    // Same placement, fresh boards, new enemy fleet.
+    // Same placement, fresh boards, new enemy cookers.
     var keep = placements.slice();
     playerBoard = B.createBoard();
     keep.forEach(function (p) { B.placeShip(playerBoard, p.ship, p.x, p.y, p.horizontal); });

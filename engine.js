@@ -12,11 +12,11 @@
 
   var SIZE = 10;
   var SHIPS = [
-    { name: 'Carrier', size: 5 },
-    { name: 'Battleship', size: 4 },
-    { name: 'Cruiser', size: 3 },
-    { name: 'Submarine', size: 3 },
-    { name: 'Destroyer', size: 2 }
+    { name: 'The Smoker', size: 5 },
+    { name: 'Grill', size: 4 },
+    { name: 'Fryer', size: 3 },
+    { name: 'Griddle', size: 3 },
+    { name: 'Kettle', size: 2 }
   ];
   var TOTAL_CELLS = 17;
 

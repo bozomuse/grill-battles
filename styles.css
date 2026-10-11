@@ -1,22 +1,23 @@
-/* Battleship Arena — design contract
- * POV: a night-time naval war room, plotting shots on a phosphor grid.
- * Scene: submarine CIC at night. Deep sea-black steel, signal-red battle lighting.
+/* Grill Battles — design contract
+ * POV: a backyard cookout after dark. Charcoal, embers, smoke in the air.
+ * Scene: night-time backyard cookout. Charcoal blacks, one ember-orange
+ * accent, a faint smoke-wisp texture hanging over everything.
  * Type: Oswald (display) / system-ui (body) / ui-monospace (coordinates, log).
- * Tokens: bg, surface, panel, text, muted, accent, line. One accent: signal red.
+ * Tokens: bg, surface, panel, text, muted, accent, line. One accent: ember.
  * Motion: calm. State changes only, transform/opacity, one easing. */
 
 :root {
-  --bg: #05090d;
-  --surface: #0b1219;
-  --panel: #101922;
-  --text: #e8eff4;
-  --muted: #8296a5;
-  --accent: #ff5340;
-  --accent-deep: #8c2317;
-  --line: #1c2a38;
-  --water: #0c1620;
-  --ship: #4a6b88;
-  --miss: #8ea2b1;
+  --bg: #0a0705;
+  --surface: #130d08;
+  --panel: #1c140c;
+  --text: #f3e9dc;
+  --muted: #a5907a;
+  --accent: #ff5a36;
+  --accent-deep: #8c2a12;
+  --line: #2b2015;
+  --water: #151009;
+  --ship: #8a6a45;
+  --miss: #9a8c78;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --radius: 8px;
 }
@@ -39,17 +40,15 @@ body {
   flex-direction: column;
 }
 
-/* Subtle steel texture: one ambient technique, kept faint. */
+/* Faint smoke-wisp texture: one ambient technique, kept barely visible. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0 3px,
-    rgba(255, 255, 255, 0.012) 3px 4px
-  );
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='7'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23s)'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
 }
 
 h1, h2 {
@@ -366,7 +365,7 @@ button {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
-.cell.fireable:hover { background: #14202d; }
+.cell.fireable:hover { background: #241a10; }
 .cell.fireable[data-state="selected"]:hover { background: var(--water); }
 
 .cell.hit-flash { animation: hitflash 450ms var(--ease); }
